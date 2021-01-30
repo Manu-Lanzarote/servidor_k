@@ -19,7 +19,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// RUTAS CRUD //
+// RUTAS CRUD PARA EL PANEL DE CONTROL ADMIN //
 
 // Consultar todos los productos ------------------
 
@@ -85,6 +85,7 @@ app.put("/editar_producto/", function (req, res) {
 });
 
 //Borrar producto ---------------------------
+
 app.delete("/borrar_producto/", function (req, res) {
   const nombre = req.body.nombre;
   db.collection("productos").deleteOne(
@@ -97,6 +98,134 @@ app.delete("/borrar_producto/", function (req, res) {
       }
     }
   );
+});
+
+// Ruta para el componente MostrarProducto.js
+
+app.get("/single_product/:nombre", function (req, res) {
+  db.collection("productos")
+    .find({ nombre: req.params.nombre })
+    .toArray(function (err, datos) {
+      if (err !== null) {
+        res.send(err);
+      } else {
+        res.send(datos);
+      }
+    });
+});
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// RUTAS PARA EL MENÚ HORIZONTAL DE LA PÁGINA "BOUTIQUE EN LIGNE"
+
+// Ruta 1 - Productos para hombre
+app.get("/productos_homme/", function (req, res) {
+  db.collection("productos")
+    .find({ genero: "Homme" })
+    .toArray(function (err, datos) {
+      if (err !== null) {
+        res.send(err);
+      } else {
+        res.send(datos);
+      }
+    });
+});
+
+// Ruta 2 - Productos para mujer
+app.get("/productos_femme/", function (req, res) {
+  db.collection("productos")
+    .find({ genero: "Femme" })
+    .toArray(function (err, datos) {
+      if (err !== null) {
+        res.send(err);
+      } else {
+        res.send(datos);
+      }
+    });
+});
+
+// Ruta 3 - Wetsuits
+app.get("/productos_wetsuit/", function (req, res) {
+  db.collection("productos")
+    .find({ tipo: "Wetsuit" })
+    .toArray(function (err, datos) {
+      if (err !== null) {
+        res.send(err);
+      } else {
+        res.send(datos);
+      }
+    });
+});
+
+// Ruta 4 - Shortys
+app.get("/productos_shorty/", function (req, res) {
+  db.collection("productos")
+    .find({ tipo: "Shorty" })
+    .toArray(function (err, datos) {
+      if (err !== null) {
+        res.send(err);
+      } else {
+        res.send(datos);
+      }
+    });
+});
+
+// Ruta 5 - Tops
+app.get("/productos_top/", function (req, res) {
+  db.collection("productos")
+    .find({ tipo: "Top" })
+    .toArray(function (err, datos) {
+      if (err !== null) {
+        res.send(err);
+      } else {
+        res.send(datos);
+      }
+    });
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////
+///////
+////
+//
+
+//RUTAS PARA LA PÁGINA "BOUTIQUE EN LIGNE"    --------    PRUEBAS DE  FILTROS      -----------------------
+
+// Consulta de prueba copiando y pegando la ruta desde Robo3/
+// OJO. En Robo3T la linea de la ruta es    db.getCollection('productos').find({ $and: [{tipo: "Wetsuit"}, {genero: "Homme"}] })
+// Aquí hay que cambiar   db.getCollection.....   por   db.collection......
+app.get("/robo/", function (req, res) {
+  db.collection("productos")
+    .find({ $and: [{ tipo: "Wetsuit" }, { genero: "Homme" }] })
+    .toArray(function (err, datos) {
+      if (err !== null) {
+        res.send(err);
+      } else {
+        res.send(datos);
+      }
+    });
+});
+
+// Para filtrar los valores que deseamos buscar hay que tener en cuenta que .get no puede recibir objetos a través del body, por lo que tiene que recibirlos por parámetros.
+
+app.get("/:tipo/:genero/", function (req, res) {
+  const tipo = req.params.tipo;
+  const genero = req.params.genero;
+
+  db.collection("productos")
+    //Ejemplos con $or y $and
+    .find({ $or: [{ tipo: `${tipo}` }, { genero: `${genero}` }] })
+    .find({ $and: [{ tipo: "Wetsuit" }, { genero: "Homme" }] })
+    //Buscando 2 características a la vez
+    .find({ genero: `${genero}`, tipo: `${tipo}` })
+    //Buscando definiendo un texto
+    .toArray(function (err, datos) {
+      if (err !== null) {
+        res.send(err);
+      } else {
+        res.send(datos);
+      }
+    });
 });
 
 app.listen(3001);
