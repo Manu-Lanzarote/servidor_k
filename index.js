@@ -1,6 +1,10 @@
 const express = require("express");
 
 const MongoClient = require("mongodb").MongoClient;
+
+//Necesito esta constante para recoger por parámetros la id de los productos en la ruta get para mostar la página de producto único. (línea 143)
+const ObjectId = require("mongodb").ObjectId;
+
 const app = express();
 
 let db;
@@ -43,7 +47,17 @@ app.post("/nuevo_producto/", function (req, res) {
     if (err !== null) {
       res.send(err);
     } else {
-      res.send(datos);
+      // res.send(datos);
+      // REFRESCAR EL NAVEGADOR AUTÓMATICAMENTE PARA QUE DESAPAREZCA EL PRODUCTO ELIMNADO
+      db.collection("productos")
+        .find()
+        .toArray(function (err, data) {
+          if (err !== null) {
+            res.send(err);
+          } else {
+            res.send(data);
+          }
+        });
     }
   });
 });
@@ -78,7 +92,17 @@ app.put("/editar_producto/", function (req, res) {
       if (err !== null) {
         res.send(err);
       } else {
-        res.send(datos);
+        // res.send(datos);
+        // REFRESCAR EL NAVEGADOR AUTÓMATICAMENTE PARA QUE DESAPAREZCA EL PRODUCTO ELIMNADO
+        db.collection("productos")
+          .find()
+          .toArray(function (err, data) {
+            if (err !== null) {
+              res.send(err);
+            } else {
+              res.send(data);
+            }
+          });
       }
     }
   );
@@ -115,6 +139,20 @@ app.get("/single_product/:nombre", function (req, res) {
 });
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// RUTA PARA MOSTRAR LA PÁGINA DE PRODUCTO ÚNICO USANDO SU id
+app.get("/Boutique/:id", function (req, res) {
+  const id = ObjectId(req.params.id);
+  db.collection("productos")
+    .find({ _id: id })
+    .toArray(function (err, datos) {
+      if (err !== null) {
+        res.send(err);
+      } else {
+        res.send(datos);
+      }
+    });
+});
 
 // RUTAS PARA EL MENÚ HORIZONTAL DE LA PÁGINA "BOUTIQUE EN LIGNE"
 
@@ -184,8 +222,8 @@ app.get("/productos_top/", function (req, res) {
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////
-///////
+////////////                             P R U E B A S DE F I L T R O S
+///////                                    (No están en producción)
 ////
 //
 
@@ -194,38 +232,38 @@ app.get("/productos_top/", function (req, res) {
 // Consulta de prueba copiando y pegando la ruta desde Robo3/
 // OJO. En Robo3T la linea de la ruta es    db.getCollection('productos').find({ $and: [{tipo: "Wetsuit"}, {genero: "Homme"}] })
 // Aquí hay que cambiar   db.getCollection.....   por   db.collection......
-app.get("/robo/", function (req, res) {
-  db.collection("productos")
-    .find({ $and: [{ tipo: "Wetsuit" }, { genero: "Homme" }] })
-    .toArray(function (err, datos) {
-      if (err !== null) {
-        res.send(err);
-      } else {
-        res.send(datos);
-      }
-    });
-});
+// app.get("/robo/", function (req, res) {
+//   db.collection("productos")
+//     .find({ $and: [{ tipo: "Wetsuit" }, { genero: "Homme" }] })
+//     .toArray(function (err, datos) {
+//       if (err !== null) {
+//         res.send(err);
+//       } else {
+//         res.send(datos);
+//       }
+//     });
+// });
 
 // Para filtrar los valores que deseamos buscar hay que tener en cuenta que .get no puede recibir objetos a través del body, por lo que tiene que recibirlos por parámetros.
 
-app.get("/:tipo/:genero/", function (req, res) {
-  const tipo = req.params.tipo;
-  const genero = req.params.genero;
+// app.get("/:tipo/:genero/", function (req, res) {
+//   const tipo = req.params.tipo;
+//   const genero = req.params.genero;
 
-  db.collection("productos")
-    //Ejemplos con $or y $and
-    .find({ $or: [{ tipo: `${tipo}` }, { genero: `${genero}` }] })
-    .find({ $and: [{ tipo: "Wetsuit" }, { genero: "Homme" }] })
-    //Buscando 2 características a la vez
-    .find({ genero: `${genero}`, tipo: `${tipo}` })
-    //Buscando definiendo un texto
-    .toArray(function (err, datos) {
-      if (err !== null) {
-        res.send(err);
-      } else {
-        res.send(datos);
-      }
-    });
-});
+//   db.collection("productos")
+//     //Ejemplos con $or y $and
+//     .find({ $or: [{ tipo: `${tipo}` }, { genero: `${genero}` }] })
+//     .find({ $and: [{ tipo: "Wetsuit" }, { genero: "Homme" }] })
+//     //Buscando 2 características a la vez
+//     .find({ genero: `${genero}`, tipo: `${tipo}` })
+//     //Buscando definiendo un texto
+//     .toArray(function (err, datos) {
+//       if (err !== null) {
+//         res.send(err);
+//       } else {
+//         res.send(datos);
+//       }
+//     });
+// });
 
 app.listen(3001);
