@@ -27,7 +27,7 @@ app.use(express.json());
 
 // Consultar todos los productos ------------------
 
-app.get("/productos/", function (req, res) {
+app.get("/productos", function (req, res) {
   db.collection("productos")
     .find()
     .toArray(function (err, datos) {
@@ -41,7 +41,7 @@ app.get("/productos/", function (req, res) {
 
 //Añadir producto ---------------------------------
 
-app.post("/nuevo_producto/", function (req, res) {
+app.post("/nuevo_producto", function (req, res) {
   const nuevoProducto = req.body;
   db.collection("productos").insertOne(nuevoProducto, function (err, datos) {
     if (err !== null) {
@@ -64,7 +64,7 @@ app.post("/nuevo_producto/", function (req, res) {
 
 //Editar producto ---------------------------------
 
-app.put("/editar_producto/", function (req, res) {
+app.put("/editar_producto", function (req, res) {
   const editarProducto = {
     nombre: req.body.nombre,
     precio: req.body.precio,
@@ -110,7 +110,7 @@ app.put("/editar_producto/", function (req, res) {
 
 //Borrar producto ---------------------------
 
-app.delete("/borrar_producto/", function (req, res) {
+app.delete("/borrar_producto", function (req, res) {
   const nombre = req.body.nombre;
   db.collection("productos").deleteOne(
     { nombre: nombre },
@@ -157,7 +157,7 @@ app.get("/Boutique/:id", function (req, res) {
 // RUTAS PARA EL MENÚ HORIZONTAL DE LA PÁGINA "BOUTIQUE EN LIGNE"
 
 // Ruta 1 - Productos para hombre
-app.get("/productos_homme/", function (req, res) {
+app.get("/productos_homme", function (req, res) {
   db.collection("productos")
     .find({ genero: "Homme" })
     .toArray(function (err, datos) {
@@ -170,7 +170,7 @@ app.get("/productos_homme/", function (req, res) {
 });
 
 // Ruta 2 - Productos para mujer
-app.get("/productos_femme/", function (req, res) {
+app.get("/productos_femme", function (req, res) {
   db.collection("productos")
     .find({ genero: "Femme" })
     .toArray(function (err, datos) {
@@ -183,7 +183,7 @@ app.get("/productos_femme/", function (req, res) {
 });
 
 // Ruta 3 - Wetsuits
-app.get("/productos_wetsuit/", function (req, res) {
+app.get("/productos_wetsuit", function (req, res) {
   db.collection("productos")
     .find({ tipo: "Wetsuit" })
     .toArray(function (err, datos) {
@@ -196,7 +196,7 @@ app.get("/productos_wetsuit/", function (req, res) {
 });
 
 // Ruta 4 - Shortys
-app.get("/productos_shorty/", function (req, res) {
+app.get("/productos_shorty", function (req, res) {
   db.collection("productos")
     .find({ tipo: "Shorty" })
     .toArray(function (err, datos) {
@@ -209,7 +209,7 @@ app.get("/productos_shorty/", function (req, res) {
 });
 
 // Ruta 5 - Tops
-app.get("/productos_top/", function (req, res) {
+app.get("/productos_top", function (req, res) {
   db.collection("productos")
     .find({ tipo: "Top" })
     .toArray(function (err, datos) {
