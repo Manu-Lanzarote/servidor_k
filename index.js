@@ -2,7 +2,7 @@ const express = require("express");
 
 const MongoClient = require("mongodb").MongoClient;
 
-//Necesito esta constante para recoger por parámetros la id de los productos en la ruta get para mostar la página de producto único. (línea 143)
+//Necesito esta constante para recoger por parámetros la id de los productos en la ruta get para mostar la página de producto único. (línea 143).
 const ObjectId = require("mongodb").ObjectId;
 
 const app = express();
